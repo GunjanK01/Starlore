@@ -4,16 +4,19 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { ClerkProvider } from '@clerk/clerk-expo'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import AuthGate from "@/components/AuthGate";
+import ClerkAndConvexProvider from "@/provider/ClerkAndConvexProvider";
 
 export default function RootLayout() {
   return (
-    <ClerkProvider tokenCache={tokenCache}>
-    <SafeAreaProvider>
-      <SafeAreaView style={{flex:1, backgroundColor: 'black'}}>
-        <AuthGate />
-      </SafeAreaView>
-    </SafeAreaProvider>
-    </ClerkProvider>
+    <ClerkAndConvexProvider>
+
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+          <AuthGate />
+        </SafeAreaView>
+      </SafeAreaProvider>
+
+    </ClerkAndConvexProvider>
 
   );
 }
