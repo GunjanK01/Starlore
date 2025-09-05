@@ -1,41 +1,38 @@
-import { Link } from "expo-router";
-import { Text, View , StyleSheet, TouchableOpacity, Image} from "react-native";
+import Story from "@/components/Story";
+import { STORIES } from "@/constants/mock-test-data";
+import { COLORS } from "@/constants/theme";
+import { styles } from "@/styles/feed.styles";
+import { useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { Text, View , TouchableOpacity, Image, ScrollView} from "react-native";
 
 export default function Index() {
+  const {signOut} = useAuth();
   return (
     <View
       style= {styles.container}
     >
-      <Link href={"/notifications"}> iseaki no watashi fan desu</Link>
-      <Image 
-      style={styles.stre}
-        source={{uri: "https://images.unsplash.com/photo-1756680967556-26861e2c836b?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw4fHx8ZW58MHx8fHx8"}} />
-      <Text>Life is enjoy, isn't it</Text>
-      <Image style= {styles.stre} source={{uri:"https://images.unsplash.com/photo-1756768937629-febe4bf15fcf?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwxNXx8fGVufDB8fHx8fA%3D%3D"}}
-      />
-      <TouchableOpacity onPress={() => {
-        alert("konichiwa")
-      }}> 
-      <Text style= {styles.title}>Click me</Text>
-      </TouchableOpacity>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Starlore</Text>
+        <TouchableOpacity onPress={() => signOut()}>
+          <Ionicons name="log-out-outline" size={24} color={COLORS.white} />          
+        </TouchableOpacity>
+
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.storiesContainer}>
+
+            {STORIES.map((story) => (
+              <Story key = {story.id} story = {story}/> 
+           ))}
+        </ScrollView>
+      </ScrollView>
+     
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    
-  },
-  title: {
-    fontSize: 24,
-    color: "skyblue",
-  },
-  stre:{
-    width: 380,
-    height: 240,
-    borderRadius: 64
-  }
-})
