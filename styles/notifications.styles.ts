@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     color: COLORS.primary,
-    fontFamily: "Monofett",
+    fontFamily: "JetBrain-Bold",
   },
   listContainer: {
     padding: 16,

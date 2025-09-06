@@ -1,12 +1,13 @@
 import { SplashScreen, Stack } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { ClerkProvider } from '@clerk/clerk-expo'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import AuthGate from "@/components/AuthGate";
 import ClerkAndConvexProvider from "@/provider/ClerkAndConvexProvider";
 import {useFonts} from "expo-font";
-import { StatusBar } from "react-native";
+import { Platform, StatusBar } from "react-native";
+import * as NavigationBar from "expo-navigation-bar";
 
 
 SplashScreen.preventAutoHideAsync(); // Keep the splash screen visible while we fetch resources
@@ -14,7 +15,7 @@ SplashScreen.preventAutoHideAsync(); // Keep the splash screen visible while we 
 export default function RootLayout() {
 
   const [fontsLoaded] = useFonts({
-    'Monofett': require("../assets/fonts/JetBrain-Bold.ttf"), 
+    'JetBrain-Bold': require("../assets/fonts/JetBrain-Bold.ttf"), 
   });
 
 
@@ -23,6 +24,17 @@ export default function RootLayout() {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+
+
+  // Match Android system nav bar with the app’s dark theme. 
+// Setting a black background and light buttons avoids clashing system colors 
+// and keeps the UI consistent, especially on devices with soft keys or gestures.
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      NavigationBar.setBackgroundColorAsync("#000000");
+      NavigationBar.setButtonStyleAsync("light");
+    }
+  }, []);
 
   return (
     <ClerkAndConvexProvider>
