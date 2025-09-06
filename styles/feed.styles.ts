@@ -19,7 +19,6 @@ export const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 24,
-    fontFamily: "JetBrainsMono-Medium",
     color: COLORS.primary,
   },
   storiesContainer: {
