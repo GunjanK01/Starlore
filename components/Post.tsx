@@ -42,6 +42,9 @@ export default function Post({ post }: PostProps) {
   const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
 
    const toggleLike = useMutation(api.post.toggleLike);
+     const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
+
+
 
   const handleLike = async () => {
     try {
@@ -52,12 +55,27 @@ export default function Post({ post }: PostProps) {
     }
   };
 
+  const handleBookmark = async () => {
+    const newIsBookmarked = await toggleBookmark({ postId: post._id });
+    setIsBookmarked(newIsBookmarked);
+  };
+
+  const deletePost = useMutation(api.post.deletePost);
+
+   const handleDelete = async () => {
+    try {
+      await deletePost({ postId: post._id });
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
   
   return (
     <View style={styles.post}>
       {/* POST HEADER */}
       <View style={styles.postHeader}>
-       
+        
           <TouchableOpacity style={styles.postHeaderLeft}>
             <Image
               source={post.author.image}
@@ -70,8 +88,16 @@ export default function Post({ post }: PostProps) {
           </TouchableOpacity>
         
 
-       
-        
+        {/* if i'm the owner of the post, show the delete button  */}
+        {post.author._id === currentUser?._id ? (
+          <TouchableOpacity onPress={handleDelete}>
+            <Ionicons name="ellipsis-horizontal" size={20} color={COLORS.primary} />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity>
+            <Ionicons name="ellipsis-horizontal" size={20} color={COLORS.white} />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* IMAGE */}
@@ -97,9 +123,9 @@ export default function Post({ post }: PostProps) {
             <Ionicons name="chatbubble-outline" size={22} color={COLORS.white} />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity >
+        <TouchableOpacity onPress={handleBookmark}>
           <Ionicons
-            name={"bookmark-outline"}
+            name={isBookmarked ? "bookmark" : "bookmark-outline"}
             size={22}
             color={COLORS.white}
           />
