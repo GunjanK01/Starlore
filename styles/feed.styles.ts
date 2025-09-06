@@ -20,6 +20,7 @@ export const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     color: COLORS.primary,
+    
   },
   storiesContainer: {
     paddingVertical: 12,
