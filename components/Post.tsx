@@ -41,8 +41,8 @@ export default function Post({ post }: PostProps) {
 
   const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
 
-   const toggleLike = useMutation(api.post.toggleLike);
-     const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
+  const toggleLike = useMutation(api.post.toggleLike);
+  const toggleBookmark = useMutation(api.bookmarks.toggleBookmark);
 
 
 
@@ -62,7 +62,7 @@ export default function Post({ post }: PostProps) {
 
   const deletePost = useMutation(api.post.deletePost);
 
-   const handleDelete = async () => {
+  const handleDelete = async () => {
     try {
       await deletePost({ postId: post._id });
     } catch (error) {
@@ -70,12 +70,20 @@ export default function Post({ post }: PostProps) {
     }
   };
 
-  
+
   return (
     <View style={styles.post}>
       {/* POST HEADER */}
       <View style={styles.postHeader}>
-        
+        <Link
+          href={
+            currentUser?._id === post.author._id
+              ? "/(tabs)/profile"
+              : `/user/${post.author._id}`
+          }
+          asChild
+        >
+
           <TouchableOpacity style={styles.postHeaderLeft}>
             <Image
               source={post.author.image}
@@ -86,7 +94,7 @@ export default function Post({ post }: PostProps) {
             />
             <Text style={styles.postUsername}>{post.author.username}</Text>
           </TouchableOpacity>
-        
+        </Link>
 
         {/* if i'm the owner of the post, show the delete button  */}
         {post.author._id === currentUser?._id ? (

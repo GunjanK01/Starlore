@@ -6,6 +6,7 @@ import { tokenCache } from '@clerk/clerk-expo/token-cache'
 import AuthGate from "@/components/AuthGate";
 import ClerkAndConvexProvider from "@/provider/ClerkAndConvexProvider";
 import {useFonts} from "expo-font";
+import { StatusBar } from "react-native";
 
 
 SplashScreen.preventAutoHideAsync(); // Keep the splash screen visible while we fetch resources
@@ -13,7 +14,7 @@ SplashScreen.preventAutoHideAsync(); // Keep the splash screen visible while we 
 export default function RootLayout() {
 
   const [fontsLoaded] = useFonts({
-    'Monofett': require("../assets/fonts/Monofett.ttf"), 
+    'Monofett': require("../assets/fonts/JetBrain-Bold.ttf"), 
   });
 
 
@@ -28,6 +29,7 @@ export default function RootLayout() {
 
       <SafeAreaProvider>
         <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }} onLayout={onLayoutRootView}>
+          <StatusBar barStyle="light-content" hidden={false} />
           <AuthGate />
         </SafeAreaView>
       </SafeAreaProvider>
