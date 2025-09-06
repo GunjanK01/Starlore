@@ -1,16 +1,17 @@
-
 import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { styles } from "@/styles/feed.styles";
 import { Ionicons } from "@expo/vector-icons";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { useState } from "react";
-
 import { View, Text, TouchableOpacity } from "react-native";
-
+import CommentsModal from "./CommentsModal";
+import { formatDistanceToNow } from "date-fns";
+import { useUser } from "@clerk/clerk-expo";
+import { toggleLike } from "@/convex/post";
 
 type PostProps = {
   post: {
@@ -30,13 +31,17 @@ type PostProps = {
   };
 };
 
-
-
 export default function Post({ post }: PostProps) {
   const [isLiked, setIsLiked] = useState(post.isLiked);
-  const [likesCount, setLikesCount] = useState(post.likes);
+  const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked);
 
-  const toggleLike = useMutation(api.post.toggleLike);
+  const [showComments, setShowComments] = useState(false);
+
+  const { user } = useUser();
+
+  const currentUser = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
+
+   const toggleLike = useMutation(api.post.toggleLike);
 
   const handleLike = async () => {
     try {
@@ -47,61 +52,61 @@ export default function Post({ post }: PostProps) {
     }
   };
 
-    function formatDistanceToNow(_creationTime: any, arg1: { addSuffix: boolean; }): import("react").ReactNode {
-        throw new Error("Function not implemented.");
-    }
-
-    return (
-        <View style={styles.post}>
-            {/*  Post Header */}
-            <View style={styles.postHeader} >
-
-                <Link href={"/(tabs)/notifications"}>
-                    <TouchableOpacity style={styles.postHeaderLeft}>
-                        <Image
-                            source={post.author.image}
-                            style={styles.postAvatar}
-                            contentFit="cover"
-                            transition={200}
-                            cachePolicy="memory-disk"
-                        />
-                        <Text style={styles.postUsername}>{post.author.username}</Text>
-                    </TouchableOpacity>
-                </Link>
-                <Text>Post</Text>
-            </View>
-
-            {/* IMAGE */}
+  
+  return (
+    <View style={styles.post}>
+      {/* POST HEADER */}
+      <View style={styles.postHeader}>
+       
+          <TouchableOpacity style={styles.postHeaderLeft}>
             <Image
-                source={post.imageUrl}
-                style={styles.postImage}
-                contentFit="cover"
-                transition={200}
-                cachePolicy="memory-disk"
+              source={post.author.image}
+              style={styles.postAvatar}
+              contentFit="cover"
+              transition={200}
+              cachePolicy="memory-disk"
             />
-            <View style={styles.postActions}>
-                <View style={styles.postActionsLeft}>
-                    <TouchableOpacity onPress={handleLike}>
+            <Text style={styles.postUsername}>{post.author.username}</Text>
+          </TouchableOpacity>
+        
+
+       
+        
+      </View>
+
+      {/* IMAGE */}
+      <Image
+        source={post.imageUrl}
+        style={styles.postImage}
+        contentFit="cover"
+        transition={200}
+        cachePolicy="memory-disk"
+      />
+
+      {/* POST ACTIONS */}
+      <View style={styles.postActions}>
+        <View style={styles.postActionsLeft}>
+          <TouchableOpacity onPress={handleLike}>
             <Ionicons
               name={isLiked ? "heart" : "heart-outline"}
               size={24}
               color={isLiked ? COLORS.primary : COLORS.white}
             />
-                    </TouchableOpacity>
-                    <TouchableOpacity >
-                        <Ionicons name="chatbubble-outline" size={22} color={COLORS.white} />
-                    </TouchableOpacity>
-                </View>
-                <TouchableOpacity >
-                    <Ionicons
-                        name={"bookmark-outline"}
-                        size={22}
-                        color={COLORS.white}
-                    />
-                </TouchableOpacity>
-            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setShowComments(true)}>
+            <Ionicons name="chatbubble-outline" size={22} color={COLORS.white} />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity >
+          <Ionicons
+            name={"bookmark-outline"}
+            size={22}
+            color={COLORS.white}
+          />
+        </TouchableOpacity>
+      </View>
 
-           {/* POST INFO */}
+      {/* POST INFO */}
       <View style={styles.postInfo}>
         <Text style={styles.likesText}>
           {post.likes > 0 ? `${post.likes.toLocaleString()} likes` : "Be the first to like"}
@@ -113,18 +118,22 @@ export default function Post({ post }: PostProps) {
           </View>
         )}
 
-        
-          <TouchableOpacity >
-            <Text style={styles.commentsText}>View all 4 comments comments</Text>
+        {post.comments > 0 && (
+          <TouchableOpacity onPress={() => setShowComments(true)}>
+            <Text style={styles.commentsText}>View all {post.comments} comments</Text>
           </TouchableOpacity>
-        
+        )}
 
         <Text style={styles.timeAgo}>
-          2hours ago
+          {formatDistanceToNow(post._creationTime, { addSuffix: true })}
         </Text>
       </View>
-        </View>
 
-        
-    )
+      <CommentsModal
+        postId={post._id}
+        visible={showComments}
+        onClose={() => setShowComments(false)}
+      />
+    </View>
+  );
 }
