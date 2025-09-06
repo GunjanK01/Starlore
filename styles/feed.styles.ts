@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 24,
     color: COLORS.primary,
-    
+    fontFamily: "Monofett",
   },
   storiesContainer: {
     paddingVertical: 12,
