@@ -10,7 +10,7 @@ export default function Notification({ notification }: any) {
   return (
     <View style={styles.notificationItem}>
       <View style={styles.notificationContent}>
-
+        <Link href={`/user/${notification.sender._id}`} asChild>
           <TouchableOpacity style={styles.avatarContainer}>
             <Image
               source={notification.sender.image}
@@ -28,14 +28,14 @@ export default function Notification({ notification }: any) {
               )}
             </View>
           </TouchableOpacity>
-
+        </Link>
 
         <View style={styles.notificationInfo}>
-
+          <Link href={`/user/${notification.sender._id}`} asChild>
             <TouchableOpacity>
               <Text style={styles.username}>{notification.sender.username}</Text>
             </TouchableOpacity>
-
+          </Link>
 
           <Text style={styles.action}>
             {notification.type === "follow"
