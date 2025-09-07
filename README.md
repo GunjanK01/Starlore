@@ -48,7 +48,7 @@
 1. Clone the repo and install dependencies:
 
 ```bash
-git clone https://github.com/yourusername/starlore.git
+git clone https://github.com/GunjanK01/Starlore.git
 cd starlore
 npm install
 # or
